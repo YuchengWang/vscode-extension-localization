@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import vscode from 'vscode';
-import localize from './localize';
+const vscode = require('vscode');
+const localize = require('./localize');
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

@@ -1,7 +1,7 @@
 /* eslint-disable sort-imports */
-import { existsSync, readFileSync } from 'fs-extra';
-import { resolve } from 'path';
-import { extensions } from 'vscode';
+const fsextra = require('fs-extra');
+const path = require('path');
+const vscode = require('vscode');
 
 class Localize {
     constructor() {
@@ -36,7 +36,7 @@ class Localize {
         const languageFormat = 'package.nls{0}.json';
         const defaultLanguage = languageFormat.replace('{0}', '.en');
 
-        const rootPath = extensions.getExtension('YuchengWang.jslocalization').extensionPath;
+        const rootPath = vscode.extensions.getExtension('YuchengWang.jslocalization').extensionPath;
         const languagePath = rootPath.concat('/i18n'.toString());
 
         const resolvedLanguage = this.recurseCandidates(
@@ -45,16 +45,16 @@ class Localize {
             this.options.locale
         );
 
-        const languageFilePath = resolve(languagePath, resolvedLanguage);
+        const languageFilePath = path.resolve(languagePath, resolvedLanguage);
 
         const defaultLanguageBundle = JSON.parse(
             resolvedLanguage !== defaultLanguage
-                ? readFileSync(resolve(languagePath, defaultLanguage), 'utf-8')
+                ? fsextra.readFileSync(path.resolve(languagePath, defaultLanguage), 'utf-8')
                 : '{}'
         );
 
         const resolvedLanguageBundle = JSON.parse(
-            readFileSync(languageFilePath, 'utf-8')
+            fsextra.readFileSync(languageFilePath, 'utf-8')
         );
 
         return { ...defaultLanguageBundle, ...resolvedLanguageBundle };
@@ -66,8 +66,8 @@ class Localize {
         candidate
     ) {
         const filename = format.replace('{0}', `.${candidate}`);
-        const filepath = resolve(rootPath, filename);
-        if (existsSync(filepath)) {
+        const filepath = path.resolve(rootPath, filename);
+        if (fsextra.existsSync(filepath)) {
             return filename;
         }
         if (candidate.split('-')[0] !== candidate) {
@@ -77,4 +77,4 @@ class Localize {
     }
 }
 
-export default Localize.prototype.localize.bind(new Localize());
+module.exports = Localize.prototype.localize.bind(new Localize());
